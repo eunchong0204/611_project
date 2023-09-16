@@ -1,0 +1,5 @@
+#!/bin/bash
+man man | wc -l | xargs echo "Command name: man; The number of lines" >> countlines.txt
+man ls | wc -l | xargs echo "Command name: ls; The number of lines" >> countlines.txt
+man find | wc -l | xargs echo "Command name: find; The number of lines" >> countlines.txt
+sort -r -t" " -k 8 -g countlines.txt
