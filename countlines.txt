@@ -1,3 +1,0 @@
-Command name: man; The number of lines 589
-Command name: ls; The number of lines 227
-Command name: find; The number of lines 1392
