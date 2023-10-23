@@ -24,5 +24,5 @@ Project Organization
 You can replicate the anlysis including figures, report, etc by using Makefile. you can look into Makefile to see targets' names.
 For example, this command will create the plots.
 ```
-
+make figures/dist_allvariables.png
 ```
