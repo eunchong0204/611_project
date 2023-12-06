@@ -9,30 +9,30 @@ output:
 ---
 
 # 1. Chronic Kidney Disease
-Chronic kidney disease (CKD) is defined by CDC as a condition in which the kidneys are damaged and cannot filter blood as much as they should. As CKD worsens, many complications like high blood pressure, anemia, weak bones, poor nutritional health, nerve damage etc. can affect people with CKD, and it may eventually lead to kidney filure requiring dialysis or transplant. It is reported that two thirds of CKD cases are caused by high blood pressure or diabetes.
+Chronic kidney disease (CKD) is defined by CDC as a condition in which kidneys are damaged and cannot filter blood as much as they should. As CKD worsens, many complications like high blood pressure, anemia, weak bones, poor nutritional health, nerve damage etc. can affect people with CKD, and it may eventually lead to kidney failure requiring dialysis or transplant. It is reported that two thirds of CKD cases are caused by high blood pressure or diabetes.
 
 
 # 2. CKD prevention in Causal Framework
 
 ## 1) Introduction
-Angiotensin-converting enzyme inhibitors (ACEIs) and angiotensin receptor blocker (ARBs) are commly used to treat high blood pressure, and considered the first line treatment for hypertension with diabetes. It is also known that ACEI/ARB provide considerable renal and cardiovascular protection effect for CKD patients. To assess the effect of ACEI/ARB to prevent CKD by using Electronic Health Record (EHR), causal framework can be used because physicians select patients treated by ACEI/ARB based on patients' kidney function resulting in selection bias. 
+Angiotensin-converting enzyme inhibitors (ACEIs) and angiotensin receptor blocker (ARBs) are commly used to treat high blood pressure, and considered the first line treatment for hypertension with diabetes. It is also known that ACEI/ARB provide considerable renal and cardiovascular protection effect for CKD patients. To assess the effect of ACEI/ARB to prevent CKD by using Electronic Health Record (EHR), causal framework should be useful because several factors can have a confounding effect between physicians' choice of prescribing ACEI/ARB and future CKD development (e.g. selection bias).
 
 ## 2) Causal Inference
-Causal analysis compares average treatment effects (ATE) if all patients were treated by ACEI/ARB versus if none were, thus it helps determine causal relationship between taking ACEI/ARB and the probability of developing CKD. It is different to the treatment effect calculated by Generalized Linear Model (GLM) from the comparison of two separate observed populations; the ACEI/ARB group and the control group. Causal odds ratio is the estimand which will be obtained for the comparison. Causal odds ratio is defined as below, and is intepreted as the ratio of odds of developing CKD in ACEI/ARB group compared to non-ACEI/ARB group. Based on the current guideline and clinical practice, it is expected to have the causal odds ratio less than one in the statistical analysis.
+Causal analysis compares average treatment effects (ATE) if all patients were treated by ACEI/ARB versus if none were, thus it helps determine causal relationship between taking ACEI/ARB and the probability of developing CKD. It is different from the treatment effect calculated by Generalized Linear Model (GLM) which is the comparison of two observed populations; the ACEI/ARB group and the control group. I will use causal odds ratio as the estimand for the comparison. Causal odds ratio is defined as below, and is intepreted as the ratio of the odds of developing CKD in ACEI/ARB group compared to the odds in non-ACEI/ARB group. Based on the current guideline and clinical practice, it is expected to have the causal odds ratio less than one in the statistical analysis.
 
 $$
 OR=\frac{E[Y(1)]/(1-E[Y(1)])}{E[Y(0)]/(1-E[Y(0)])}
 $$
 
-where $Y(1)$ and $Y(0)$ are the counterfactual probability of CKD if all patients received ACEI/ARE and if all patients did not, respectively.
+where $Y(1)$ and $Y(0)$ are the counterfactual probability CKD if all patients received ACEI/ARE and if all patients did not, respectively.
 
 
 ## 3) Assumptions
-The assumptions required for the counterfactual mean to be identified are (1) no interference, (2) consistency, (3) the randomization condition, and (4) the positivity condition. The positivity condition holds provided, for each intervention, $a$, $P(A = a |W =w) > 0$ for every plausible value of baseline covariates, $w$, meaning each patient can be assigned to any treatment group. The positivity condition will be closely investigated later.
+The assumptions required for the counterfactual mean ($E[Y(0)]$ and $E[Y(1)]$) to be identified are (1) no interference, (2) consistency, (3) the randomization condition, and (4) the positivity condition. The positivity condition holds provided, for each intervention, $a$, $P(A = a |W =w) > 0$ for every plausible value of baseline covariates, $w$, meaning each patient can be assigned to any treatment group. The positivity condition will be closely investigated later.
 
 
 ## 4) Formulas
-The augmented IPTW (AIPTW) formula combining IPTW and G-computation will be used to estimate ATE in this analysis because it is doubly robust and it make inference valid even when the flexible estimation is used. The AIPTW formula is below.
+The augmented IPTW (AIPTW) formula combining IPTW and G-computation will be used to estimate ATE or causal odds ratio in this analysis because it is doubly robust and it make inference valid even when the flexible estimation is used. The AIPTW formula is below.
 $$
 E[Y(a)] = E[E(Y|A=a,W)] + E\left[\frac{I(A=a)Y}{P(A=a|W)}\right] - E\left[\frac{I(A=a)}{P(A=a|W)}E(Y|A=a,W)\right]
 $$
@@ -60,7 +60,7 @@ $$
 
 
 # 3. Data
-The data used for this analysis is "Chronic kidney disease EHRs Abu Dhabi", and can be downloaded from the Kaggle homepage. The data contains 491 observations with 22 variables. The variable's name of the treatment is "ACEIARB" with  one indicating treatment assigned, and the response is "EventCKD35" with one indicating an event. There are two other types of response variables, time-to-event variables, and these variables are not of interest, so they are excluded in the downstream analysis.   
+The data used for this analysis is "Chronic kidney disease EHRs Abu Dhabi", and can be downloaded from the Kaggle homepage. The data contains 491 observations with 22 variables. The variable's name of the treatment is "ACEIARB" with  one indicating treatment assigned, and the response is "EventCKD35" with one indicating an event. There are two other types of response variables (time-to-event variables), but these variables are not of interest, so they will be excluded in the downstream analysis.   
 
 ## 1) Description of Data  
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
@@ -69,7 +69,7 @@ source("description.R")
 ```
 
 
-The distribution of each variable with the proportional contribution of "ACEIARB" is shown below.
+The distribution of each variable with the proportional contribution by "ACEIARB" is shown below.
 ```{r, echo=FALSE, fig.cap="Figure 1", fig.align='center'}
 knitr::include_graphics("figures/dist_allvariables.png")
 ```
@@ -88,7 +88,7 @@ The Fisher's exact test is conducted for the table, and its estimate of the odds
 
 
 ## 2) Assumption Check
-One of the importatnt assumption is the positivity condition. As explained above, it means $P(A = a |W=w) > 0$ for every intervention and covariate. The distribution of "HistoryHTN" and "HTNmeds" in the plot above may indicate the positivity assumption may be violated in this data. One of the possible way of dealing with positivity violation is to re-define the population of interest. Thus, the scientific question can be changed to "For those having HTN and diabetes and taking (or intending to take) HTN medications, is taking ACEI/ARB beneficial for the prevention of CKD?"  
+One of the important assumption is the positivity condition. As explained above, it means $P(A = a |W=w) > 0$ for every intervention and covariate. The distribution of "HistoryHTN" and "HTNmeds" in the plot above may indicate that the positivity assumption may be violated. One of the possible way of dealing with positivity violation is to re-define the population of interest. I will choose the subpopulation of those who having HTN and diabetes and taking (or intending to take) HTN medication. Thus, the scientific question can be changed to "For those having HTN and diabetes and taking HTN medications, is taking ACEI/ARB beneficial for the prevention of CKD?"  
   
 The distribution of the covariates for the new population is shown below.
 
@@ -113,7 +113,7 @@ knitr::include_graphics("figures/boxplot.png")
 
 
 # 4. Analysis
-The analysis is divded into two part; estimation and inference. In AIPTW, there are two quantities, $g(w):=P(A=a|W=w)$ and $\bar{Q}(a,w):=E(Y|A=a,W=w)$, to be estimated. For estimation, Super Learner will be used, and for inference, the formula stated above will be used. Super Learner is the method to choose the estimator or the weighted sum of estimators with the lowest estimated cross-validated risk (Maximizing AUC) given the list of the estimators. It is recommended to use as many different estimators as possible, but I will consider the three methods, "GLM of Binomial distribution", "Gradient Boosting (XGBoost)", and "Random Forest" with the default hyperparameters.
+The analysis is divded into two parts; estimation and inference. In AIPTW, there are two quantities, $g(w):=P(A=a|W=w)$ and $\bar{Q}(a,w):=E(Y|A=a,W=w)$, to be estimated. For estimation, Super Learner will be used, and for inference, the formula stated above will be used. Super Learner is the method to choose the estimator or the weighted sum of estimators with the lowest estimated cross-validated risk (Maximizing AUC in the binary outcome) given the list of the estimators. It is recommended to use as many different estimators as possible, but I will consider the three methods, "GLM of Binomial distribution", "Gradient Boosting (XGBoost)", and "Random Forest" with the default hyperparameters.
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 # Source
@@ -127,10 +127,10 @@ The estimated $\widehat{E[Y(0)]}$ and $\widehat{E[Y(1)]}$ are `r aiptw_0` and `r
 The 95% CI is calculated as (`r lb`, `r ub`) from the forumula above.
 
 # 5. Conclusion
-The estimate of odds ratio by AIPTW is `r ate_odds`, and the 95% CI of (`r lb`, `r ub`) does include one, which means taking ACEI/ARB is independent of CKD event. Although the estimate of odds ratio by AIPTW is closer to one than the one by Fisher's exact test, it does not exactly explain the current guideline and clinical practice. The Figure 4 shows all odds ratio estimates and its CIs.
+The estimate of odds ratio by AIPTW is `r ate_odds`, and the 95% CI of (`r lb`, `r ub`) does include one, which means taking ACEI/ARB is independent of CKD event. Although the estimate of odds ratio by AIPTW is closer to one than the one by Fisher's exact test, it does not exactly explain the current guideline and clinical practice because the estimate is larger than one. The Figure 4 shows all odds ratio estimates and its CIs.
 
 ```{r, echo=FALSE, fig.cap="Figure 4", fig.align='center', out.width="60%"}
 knitr::include_graphics("figures/odds_ratio.png")
 ```
 
-One way of explaining this result is the violation of the assumption (3), which is that all variables having a confounding effect should be included in baseline covariates, $W$. One possible covariates not included in the model is proteinuria. Along with eGFR, Proteinuria is the important risk factor for kidney disease, and is widely used to evaluate kidney function. Thus, it is recommended to further investigate and analyze EHR data with more covariates including proteinuria to conclude the relationship between taking ACEI/ARB and the event of CKD.
+One way of explaining this result is the violation of the assumption (3), which is that all variables having a confounding effect should be included in analysis as baseline covariates, $w$. One possible covariates not included in the model is Proteinuria. Along with eGFR, Proteinuria is the important risk factor for kidney disease, and is widely used to evaluate kidney function. So, physicians is more likely to prescribe ACEI/ARB to patients with proteinuria because physicians think the patients have more possibility to have kidney dysfunction. Therefore, it would be recommended to further investigate and analyze EHR data with more covariates including proteinuria to conclude the relationship between taking ACEI/ARB and the event of CKD.
