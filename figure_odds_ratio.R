@@ -3,11 +3,10 @@
 # Library
 source("analysis.R")
 source("description.R")
+source("utils.R")
 library(tidyverse)
 library(reshape2)
-source("utils.R")
 library(forcats)
-install.packages("forcats")
 
 # Create data frame
 boxLabels = c("AIPTW", "Fisher_subpop", "Fisher")
